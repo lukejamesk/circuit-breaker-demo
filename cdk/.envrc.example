@@ -1,0 +1,5 @@
+export ENVIRONMENT=dev
+export STAGE=luke
+export APPLICATION=service-name-here
+export STACK_NAME=${STAGE}-${ENVIRONMENT}-${APPLICATION}
+export OWNERSHIP="Luke King"

@@ -1,0 +1,12 @@
+node_modules
+build
+.envrc
+
+# CDK
+.cdk.staging
+.cdk.out
+cdk/cdk.out
+
+# App
+app/lib
+dist

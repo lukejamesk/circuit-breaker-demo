@@ -1,0 +1,33 @@
+{
+  "name": "cdk-base",
+  "version": "0.1.0",
+  "bin": {
+    "cdk-base": "bin/cdk-base.js"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "bootstrap": "cdk bootstrap",
+    "synth": "npm run build && cdk synth",
+    "test": "jest",
+    "build:all": "(cd ../app && npm run build && cd ../cdk && npm run build)",
+    "deploy:raw": "./scripts/deploy.sh",
+    "deploy:all": "(npm run build:all && npm run deploy:raw)",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.94.1",
+    "@aws-cdk/aws-iam": "^1.94.1",
+    "@aws-cdk/aws-lambda": "^1.94.1",
+    "@aws-cdk/core": "1.94.1",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "aws-cdk": "1.94.1",
+    "jest": "^26.4.2",
+    "prettier": "^2.2.1",
+    "source-map-support": "^0.5.16",
+    "ts-jest": "^26.2.0",
+    "ts-node": "^9.0.0",
+    "typescript": "~3.9.7"
+  },
+  "dependencies": {}
+}
