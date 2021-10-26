@@ -19,6 +19,7 @@
     "@aws-cdk/aws-iam": "^1.94.1",
     "@aws-cdk/aws-lambda": "^1.94.1",
     "@aws-cdk/core": "1.94.1",
+    "@aws-cdk/aws-dynamodb": "1.94.1",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
     "aws-cdk": "1.94.1",

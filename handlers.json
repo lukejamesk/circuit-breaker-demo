@@ -1,4 +1,4 @@
 {
-    "exampleLambda": "lambdas/exampleLambda.default"
-  }
+    "exampleLambda": "lambdas/circuitBreakerDemo.default"
+}
   

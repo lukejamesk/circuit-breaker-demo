@@ -3,6 +3,7 @@ type Config = {
     APPLICATION: string;
     STAGE: string;
     STACK_NAME: string;
+    CIRCUIT_BREAKER_TABLE: string;
 }
 
 const configProperties: (keyof Config)[] = [
@@ -10,6 +11,7 @@ const configProperties: (keyof Config)[] = [
     'APPLICATION',
     'STAGE',
     'STACK_NAME',
+    'CIRCUIT_BREAKER_TABLE',
 ];
 
 const getConfig = () => {
