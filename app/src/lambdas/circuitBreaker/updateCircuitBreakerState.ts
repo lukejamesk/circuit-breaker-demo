@@ -16,7 +16,7 @@ const updateCircuitBreakerState = async (state: CircuitBreakerLambdaState): Prom
       UpdateExpression:
         'set circuitState=:st, failureCount=:fc, successCount=:sc, nextAttempt=:na, stateTimestamp=:ts',
       ExpressionAttributeValues: {
-        ':st': state.state,
+        ':st': state.circuitState,
         ':fc': state.failureCount,
         ':sc': state.successCount,
         ':na': state.nextAttempt,

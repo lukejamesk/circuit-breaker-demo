@@ -1,5 +1,5 @@
 import { DynamoDB } from 'aws-sdk';
-import { CircuitBreakerLambdaState, CircuitBreakerState } from './types';
+import { CircuitBreakerLambdaState, CircuitState } from './types';
 
 const tableName = process.env.CIRCUIT_BREAKER_TABLE as string;
 const lambdaFunctionName = process.env.AWS_LAMBDA_FUNCTION_NAME;
@@ -22,7 +22,7 @@ const getCircuitBreakerState = async (): Promise<CircuitBreakerLambdaState> => {
 
     return {
       failureCount: 0,
-      state: CircuitBreakerState.Closed,
+      circuitState: CircuitState.Closed,
       successCount: 0,
       nextAttempt: 0,
     };

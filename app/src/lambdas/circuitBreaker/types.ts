@@ -4,14 +4,14 @@ export type CircuitBreakerOptions = {
   timeout: number;
 }
 
-export enum CircuitBreakerState {
+export enum CircuitState {
   Open = 'open',
   Closed = 'closed',
   Half = 'half-open',
 }
 
 export type CircuitBreakerLambdaState = {
-  state: CircuitBreakerState;
+  circuitState: CircuitState;
   failureCount: number;
   successCount: number;
   nextAttempt: number;

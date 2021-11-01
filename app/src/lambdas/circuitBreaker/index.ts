@@ -1,20 +1,20 @@
 import getCircuitBreakerState from './getCircuitBreakerState';
 import updateCircuitBreakerState from './updateCircuitBreakerState';
-import { CircuitBreakerLambdaState, CircuitBreakerOptions, CircuitBreakerState } from './types';
+import { CircuitBreakerLambdaState, CircuitBreakerOptions, CircuitState } from './types';
 
 const onSuccess = async (options: CircuitBreakerOptions, existingState: CircuitBreakerLambdaState, response: any) => {
   const newSuccessCount = existingState.successCount + 1;
-  const newOpenState = (existingState.state === CircuitBreakerState.Half && newSuccessCount > options.successThreshold)
-    ? CircuitBreakerState.Closed
-    : CircuitBreakerState.Half;
+  const newOpenState = (existingState.circuitState === CircuitState.Half && newSuccessCount > options.successThreshold)
+    ? CircuitState.Closed
+    : CircuitState.Half;
 
   const newState: CircuitBreakerLambdaState = {
-    ...existingState,
-    successCount: newSuccessCount,
-    state: newOpenState,
+    failureCount: newOpenState === CircuitState.Closed ? 0 : existingState.failureCount,
+    successCount: newOpenState === CircuitState.Closed ? 0 : newSuccessCount,
+    circuitState: newOpenState,
+    nextAttempt: 0,
   }
 
-  console.log('newState success:', existingState, newState)
   await updateCircuitBreakerState(newState);
 
   return response;
@@ -22,17 +22,18 @@ const onSuccess = async (options: CircuitBreakerOptions, existingState: CircuitB
 
 const onFailed = async (options: CircuitBreakerOptions, existingState: CircuitBreakerLambdaState, err: any): Promise<void> => {
   const newFailureCount = existingState.failureCount + 1;
-  const newOpenState = newFailureCount > options.failureThreshold ? CircuitBreakerState.Open : CircuitBreakerState.Half;
-  const newSuccessCount = newOpenState === CircuitBreakerState.Open ? 0 : existingState.successCount;
+  const newOpenState = newFailureCount > options.failureThreshold ? CircuitState.Open : CircuitState.Half;
+  const newSuccessCount = newOpenState === CircuitState.Open ? 0 : existingState.successCount;
+  const newNextAttempt =  newOpenState === CircuitState.Open ? Date.now() + options.timeout : 0;
 
   const newState: CircuitBreakerLambdaState = {
     ...existingState,
     failureCount: newFailureCount,
-    state: newOpenState,
+    circuitState: newOpenState,
     successCount: newSuccessCount,
+    nextAttempt: newNextAttempt,
   }
 
-  console.log('newState failed:', existingState, newState)
   await updateCircuitBreakerState(newState);
 
   return err;
@@ -40,11 +41,11 @@ const onFailed = async (options: CircuitBreakerOptions, existingState: CircuitBr
 
 const getCircuitBreaker = (options: CircuitBreakerOptions) => async (fn: () => void) => {
   const currentState = await getCircuitBreakerState();
-  let newCurrentState = currentState.state;
+  let newCurrentState = currentState.circuitState;
 
-  if (currentState?.state === CircuitBreakerState.Open) {
-    if (currentState?.nextAttempt <= Date.now()) {
-      newCurrentState = CircuitBreakerState.Half;
+  if (currentState.circuitState === CircuitState.Open) {
+    if (currentState.nextAttempt <= Date.now()) {
+      newCurrentState = CircuitState.Half;
     } else {
       throw new Error('Circuit Breaker State: OPEN');
     }
@@ -54,7 +55,7 @@ const getCircuitBreaker = (options: CircuitBreakerOptions) => async (fn: () => v
     const response = await fn();
     return onSuccess(options, {
       ...currentState,
-      state: newCurrentState,
+      circuitState: newCurrentState,
     }, response);
   } catch (err) {
     return onFailed(options, currentState, err);

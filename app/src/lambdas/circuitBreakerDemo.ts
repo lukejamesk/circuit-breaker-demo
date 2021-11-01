@@ -1,14 +1,20 @@
 import getDetails from "../getDetails";
 import getCircuitBreaker from "./circuitBreaker";
 
-export default async () => {
+type Event = {
+    forceFail?: boolean;
+};
+
+export default async (event: Event) => {
+    console.log(event)
+    const { forceFail = false } = event;
     const circuitBreaker = getCircuitBreaker({
         failureThreshold: 5,
         timeout: 10000,
         successThreshold: 2,
     });
 
-    const result = await circuitBreaker(getDetails);
+    const result = await circuitBreaker(() => getDetails(forceFail));
 
     const response = {
         statusCode: 200,
